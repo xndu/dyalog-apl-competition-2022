@@ -1,6 +1,16 @@
 Base85←{
-    cv←⍉(4⍴256)⊤(5⍴85)⊤⍣¯1⍉
-    ⍵≢⍕⍵:⍺[(¯4|≢⍵)↓,1+cv⍣¯1↑⍵⊆⍨⌈4÷⍨⍳≢⍵]
-    s←⍵/⍨⍵∊⍺
-    (¯5|≢s)↓,cv 85|-∘1↑(⍺⍳s)⊆⍨⌈÷∘5⍳≢s
+    cv←⍉(4⍴256)⊤(5⍴85)⊤⍣¯1⍉             ⍝ b85->b256
+    ⍵≢⍕⍵:⍺[(¯4|≢⍵)↓,1+cv⍣¯1↑⍵⊆⍨⌈4÷⍨⍳≢⍵] ⍝ on non-string:
+⍝                          ↑⍵⊆⍨⌈4÷⍨⍳≢⍵      split every 4 and pad
+⍝                     cv⍣¯1                 b256->b85
+⍝          (¯4|≢⍵)↓,                        unpad
+⍝        ⍺[         1+                ]     index into encoding characters
+⍝                                         on string:
+    s←⍵∩⍺                               ⍝   remove invalid characters
+    (¯5|≢s)↓,cv 85|-∘1↑(⍺⍳s)⊆⍨⌈5÷⍨⍳≢s
+⍝                       ⍺⍳s                 get 1-indices
+⍝                           ⊆⍨⌈5÷⍨⍳≢s       split every 5
+⍝               85|-∘1↑                     0-index and pad
+⍝            cv                             b85->b256
+⍝   (¯5|≢s)↓,                               unpad
 }

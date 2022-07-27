@@ -1,0 +1,26 @@
+⍝wip
+ DDN←{
+     alphanum←⎕D,⎕A,⎕C ⎕A
+     split←∊∘alphanum⊆⊢
+     k←split ⍺
+     v←split (~⍤∊∘'th'/⊢)⎕C ⍵
+     select←{⍺←k⋄⍺⍺⍣(≢res)⊢res←∪(⍺∊⍵)/v}
+     year←⍎select⊂'YYYY'
+     year100←(100|year)∪⍎select⊂'YY'
+     month←⍎select(,'M') 'MM' '_M'
+     month∪←(⎕C k) ('jan' 'feb' 'mar' 'apr' 'may' 'jun' 'jul' 'aug' 'sep' 'oc' 'nov' 'dec'∘⍳)select 'mmm' '_mm'
+     month∪←(⎕C k) ('january' 'february' 'marc' 'april' 'may' 'june' 'july' 'augus' 'sepember' 'ocober' 'november' 'december'∘⍳)select 'mmmm' '_mmm'
+     day←⍎select(,'D') 'DD' '_D'
+     hour←⍎select(,'h') 'hh' '_h'
+     minute←⍎select(,'m') 'mm' '_m'
+     second←⍎select(,'s') 'ss' '_s'
+     dow←⍎select⊂(,'d')
+     dow∪←(⎕C k) ('mon' 'ue' 'wed' 'u' 'fri' 'sa' 'sun'∘⍳)select 'ddd' '_dd'
+
+     dow∪←(⎕C k) ('monday' 'tuesday' 'wednesday' 'thursday' 'friday' 'saturday' 'sunday'∘⍳)select 'dddd' '_ddd'
+     weekn←⍎select(,'w') 'ww' '_w'
+     weekyr←⍎select⊂'WWWW'
+     weekyr100←⍎select⊂'WW'
+     doy←⍎select(,'y') 'yy' '_y'
+
+ }

@@ -35,7 +35,6 @@ ShowedUp←{
     reg        ,(+⌿attend),reg[;2]-+⌿∨/⊢attend
 ⍝   year regist day1 day2  (regist-attended)
 }
-⍝   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .
 
 Popular←{{⍵[⍒⍵;]}¨↑[1]¨↓(4⍎⍤↑¨⍵[;1])⊆[1]⍥(('break'∘≢¨⍵[;2])∘⌿)⍵[;2],[1.5]⍨+⌿⍺}
 ⍝                                                                   [1.5]⍨+⌿⍺   # attendees

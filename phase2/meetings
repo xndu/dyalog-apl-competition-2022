@@ -1,0 +1,22 @@
+split←≠⊆⊢
+timestamp←0 12 31 24 60⊥5↑∘∊'0'⍎⍤,∘(∩∘⎕D)¨¨2⌽¨'/:'split¨2↑' '∘split
+
+Attended←{
+    members←⌷⍨∘⊂∘⍋⍨⍺[;1]{⍺(timestamp¨⍵)}⌸⍺[;2 3]
+    diff←×⍤1∘¯1 1
+    intersect←+/0⌈+.⌊
+    members[;2]∘.((+/⍤⊢≤2×intersect)⍥diff)↓timestamp¨⍵[;3 4]
+}
+
+ShowedUp←{
+    attendance←⍺ Attended ⍵
+    days←attendance⊆⍨⌊1440÷⍨timestamp¨⍵[;3]
+    attend←∨/¨2 2⍴⍤1⊢days
+    reg←(¯4⍎⍤↑¨⍺[;4]),∘≢∘∪⌸⍺[;1]
+    reg,(+⌿attend),reg[;2]-+⌿∨/⊢attend
+}
+
+Popular←{
+    names←⍵[;2]
+    {⍵[⍒⍵;]}¨↑[1]¨↓(4⍎⍤↑¨⍵[;1])⊆[1]⍥(('break'∘≢¨names)∘⌿)names,[1.5]⍨+⌿⍺
+}

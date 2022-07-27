@@ -1,0 +1,20 @@
+Ballot←{,⍨∘≢⌸0⌈1+(?⍨∘|-∘?1⌈-)¨⍵⍴⍺}
+                  ?⍨∘|       ¨⍵⍴⍺   ⍝ random permutations of ⍳|⍺
+               1+     -∘?1⌈-        ⍝ subtract random in 1-⍨⍳-⍺ when ⍺<0
+             0⌈                     ⍝ no less than 0
+        ,⍨∘≢⌸                       ⍝ group by permutation into count,permutation
+
+IRV←{
+    cands←⍳≢⊃⍵[1;2]
+    votes←+⌿↑{⍺×1=⍵}/⍵                  ⍝ votes garnered by each candidate
+    ~∨/in←votes>0:⍬                     ⍝ no one has votes: no winner
+    cands/⍨←in ⋄ votes/⍨←in
+    tally←⊂cands,[1.5]votes             ⍝ current round's vote tally
+    ≢win←cands/⍨(2∘×>+/)votes:tally,win ⍝ if someone won, output tally,winner
+    los←cands/⍨votes=⌊/votes            ⍝ all with lowest #votes lose the round
+    next←{0@los⊢⍵-+/⍵∘.>{⍵/⍨×⍵}⍵[los]}¨⍵[;2]
+⍝                       {⍵/⍨×⍵}⍵[los]     for losers voted for,
+⍝               ⍵-+/⍵∘.>                  shift up lower choices
+⍝         0@los⊢                          remove losers from consideration
+    tally,∇ next{⍺,⍨+/⍵}⌸⍵[;1]          ⍝ re-group voters and recurse, prepending tally
+}

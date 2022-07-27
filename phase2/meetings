@@ -1,22 +1,46 @@
-split←≠⊆⊢
-timestamp←0 12 31 24 60⊥5↑∘∊'0'⍎⍤,∘(∩∘⎕D)¨¨2⌽¨'/:'split¨2↑' '∘split
+⍝ convert a string time into an integer timestamp
+⍝ important properties: 
+⍝   correct subtraction within a day
+⍝   days, years are distinct
+⍝ input format: M/D/YYYY hh:mm or --
+time←0 12 31 24 60⊥5↑∘∊'0'⍎⍤,∘(∩∘⎕D)¨¨2⌽¨'/:'(≠⊆⊢)¨2↑' '∘(≠⊆⊢)
+⍝ command                                                       some                         none
+⍝                                                    ' '∘(≠⊆⊢)  'M/D/YYYY'     | 'hh:mm'   ,⊂'--'
+⍝                                                  2↑           'M/D/YYYY'     | 'hh:mm'     '--' | ''
+⍝                                        '/:'(≠⊆⊢)¨             'M'|'D'|'YYYY' | 'hh'|'mm'   '--' | ''
+⍝                                     2⌽¨                       'YYYY'|'M'|'D' | 'hh'|'mm'   '--' | ''
+⍝                      '0'⍎⍤,∘(∩∘⎕D)¨¨                          YYYY|M|D       | hh|mm       0    | 0
+⍝                  5↑∘∊                                         YYYY | M | D | hh | mm       0 0 0 0 0
+⍝    0 12 31 24 60⊥                                             convert, preserving hh:mm distances
+
 
 Attended←{
-    members←⌷⍨∘⊂∘⍋⍨⍺[;1]{⍺(timestamp¨⍵)}⌸⍺[;2 3]
-    diff←×⍤1∘¯1 1
-    intersect←+/0⌈+.⌊
-    members[;2]∘.((+/⍤⊢≤2×intersect)⍥diff)↓timestamp¨⍵[;3 4]
+    members←⌷⍨∘⊂∘⍋⍨⍺[;1]{⍺(time¨⍵)}⌸⍺[;2 3]
+⍝                  ⍺[;1]{⍺(time¨⍵)}⌸⍺[;2 3]             name | timestamps, grouped by name
+⍝           ⌷⍨∘⊂∘⍋⍨                                     sorted by name
+    diff←×⍤1∘¯1 1       ⍝ a b -> ¯a b
+    intersect←+/0⌈+.⌊   ⍝ ¯a b intersect ¯c d -> sum(max(0,min(b,d)-max(a,c)) over ¯a,b rows)
+    members[;2]∘.((+/⍤⊢≤2×intersect)⍥diff)↓time¨⍵[;3 4]
+⍝   members[;2]∘.(                 )⍥diff)↓time¨⍵[;3 4] for attendee times and session time:
+⍝                       2×intersect                       twice attendee time present
+⍝                  +/⍤⊢≤                                  at least session duration?
 }
 
 ShowedUp←{
     attendance←⍺ Attended ⍵
-    days←attendance⊆⍨⌊1440÷⍨timestamp¨⍵[;3]
-    attend←∨/¨2 2⍴⍤1⊢days
-    reg←(¯4⍎⍤↑¨⍺[;4]),∘≢∘∪⌸⍺[;1]
-    reg,(+⌿attend),reg[;2]-+⌿∨/⊢attend
+    days←attendance⊆⍨⌊1440÷⍨time¨⍵[;3]  ⍝ split session axis by day (4 days)
+    attend←∨/¨2 2⍴⍤1⊢days               ⍝ group into years (axes: attendee year day)
+                                        ⍝ count attendance if attended ≥1 event
+    reg←(¯4⍎⍤↑¨⍺[;4]),∘≢∘∪⌸⍺[;1]        ⍝ year | unique registrants, grouped by year
+    reg        ,(+⌿attend),reg[;2]-+⌿∨/⊢attend
+⍝   year regist day1 day2  (regist-attended)
 }
+⍝   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .
 
-Popular←{
-    names←⍵[;2]
-    {⍵[⍒⍵;]}¨↑[1]¨↓(4⍎⍤↑¨⍵[;1])⊆[1]⍥(('break'∘≢¨names)∘⌿)names,[1.5]⍨+⌿⍺
-}
+Popular←{{⍵[⍒⍵;]}¨↑[1]¨↓(4⍎⍤↑¨⍵[;1])⊆[1]⍥(('break'∘≢¨⍵[;2])∘⌿)⍵[;2],[1.5]⍨+⌿⍺}
+⍝                                                                   [1.5]⍨+⌿⍺   # attendees
+⍝                                                             ⍵[;2],                        | session name
+⍝                       (4⍎⍤↑¨⍵[;1])⊆[1]                                        split by year
+⍝                                       ⍥(('break'∘≢¨⍵[;2])∘⌿)                    don't include breaks
+⍝                 ↑[1]¨↓                                                        re-pair
+⍝        {⍵[⍒⍵;]}¨                                                              sort by attendance

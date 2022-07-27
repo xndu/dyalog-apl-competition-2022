@@ -3,7 +3,7 @@ Base85←{
     ⍵≢⍕⍵:⍺[(¯4|≢⍵)↓,1+cv⍣¯1↑⍵⊆⍨⌈4÷⍨⍳≢⍵] ⍝ on non-string:
 ⍝                          ↑⍵⊆⍨⌈4÷⍨⍳≢⍵      split every 4 and pad
 ⍝                     cv⍣¯1                 b256->b85
-⍝          (¯4|≢⍵)↓,                        unpad
+⍝          (¯4|≢⍵)↓,                        join and unpad
 ⍝        ⍺[         1+                ]     index into encoding characters
 ⍝                                         on string:
     s←⍵∩⍺                               ⍝   remove invalid characters
@@ -12,5 +12,5 @@ Base85←{
 ⍝                           ⊆⍨⌈5÷⍨⍳≢s       split every 5
 ⍝               85|-∘1↑                     0-index and pad
 ⍝            cv                             b85->b256
-⍝   (¯5|≢s)↓,                               unpad
+⍝   (¯5|≢s)↓,                               join and unpad
 }

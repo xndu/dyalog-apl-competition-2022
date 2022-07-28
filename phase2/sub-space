@@ -4,14 +4,14 @@ runs←{∨/≠/(⍳⍺)∘.<+\⍵}
 ⍝       ≠/              -> <min ≠ <max (≡ in [min,max))
 ⍝     ∨/                for some run
 
-fill←{⊃∘⍸⍤1⊢∧/¨≠/(⍳⍺)∘.<(+\⍵(↑{⍺ ⍵}↓)⍤1⍨≢⍺)}
-⍝                          ⍵(↑{⍺ ⍵}↓)⍤1⍨≢⍺  split each row into boxed [min],[length]
-⍝                        +\                 -> [min],[max]
-⍝                (⍳⍺)∘.<                    for each pos,row: <min, <max
-⍝              ≠/                            unequal (≡ in [min,max))
-⍝           ∧/¨                               in every dimension (∧.≠/ fails for 0=≢⍵)
-⍝        ⍤1                                 for each cell:
-⍝     ⊃∘⍸                                    first ⍵-row where present
+fill←{⊃∘⌽∘⍸⍤1⊢∧/¨≠/(⍳⍺)∘.<(+\⍵(↑{⍺ ⍵}↓)⍤1⍨≢⍺)}
+⍝                            ⍵(↑{⍺ ⍵}↓)⍤1⍨≢⍺    split each row into [min],[length]
+⍝                          +\                   -> [min],[max]
+⍝                  (⍳⍺)∘.<                      for each pos,row: <min, <max
+⍝                ≠/                               unequal (≡ in [min,max))
+⍝             ∧/¨                                 in every dimension (∧.≠/ fails for 0=≢⍵)
+⍝          ⍤1                                   for each cell:
+⍝     ⊃∘⌽∘⍸                                       last ⍵-row where present
 
 subspaces←{1+⍪⍉(⍴⍵)⊤↑{-⍨\(1-⍨⍺⍳⍵)(-⍵⍳⍨⌽⍺)}∘(⍳⌈/)⍨,⍵}
 ⍝                                                ,⍵    ravel (=> ⍺)

@@ -1,7 +1,7 @@
 reshape←{⊃{⌽[⍺]⍵}/(⍸0>,⍺),⊂⍵⍴⍨|⍺}
 ⍝                          ⍵⍴⍨|⍺    reshape as normal
-⍝                 (⍸0>,⍺),⊂         for each negative index:
-⍝         {⌽[⍺]⍵}/                   reverse that dimension
+⍝                 (⍸0>,⍺),⊂         for each negative index,
+⍝         {⌽[⍺]⍵}/                    reverse that dimension
 ⍝        ⊃                          unbox
 
 reshape2←{
@@ -9,13 +9,12 @@ reshape2←{
     len←|×/mask/⍺   ⍝ output known length
     sel←⊃⍺/⍨~mask   ⍝ special value (if any), default 0
     len×←dim←⌈⌊⍣(1>|sel)⊢len÷⍨≢,⍵
-⍝                             ≢,⍵   #elements in input
-⍝                        len÷⍨      divide len
+⍝                        len÷⍨≢,⍵   ratio of input size to known output size
 ⍝            ⌈⌊⍣(1>|sel)⊢           0.5 = truncate, others = fill
 ⍝        dim←                       -> new dimension
 ⍝   len×←                           ×-> new total length
     ((dim××sel)@{~mask}⍺)reshape len↑⍣(2<|sel)⊢,⍵
 ⍝                                len↑⍣(2<|sel)⊢,⍵   2.5 = pad (default = repeat)
 ⍝                        reshape                    reshape with:
-⍝   ((dim××sel)@{~mask}⍺)                            include new dimension
+⍝   ((dim××sel)@{~mask}⍺)                             include new dimension
 }

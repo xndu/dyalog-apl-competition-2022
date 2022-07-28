@@ -5,15 +5,14 @@ Ballot←{,⍨∘≢⌸0⌈1+(?⍨∘|-∘?1⌈-)¨⍵⍴⍺}
         ,⍨∘≢⌸                       ⍝ group by permutation into count,permutation
 
 IRV←{
-    cands←⍳≢⊃⍵[1;2]
-    votes←+⌿↑{⍺×1=⍵}/⍵                  ⍝ votes garnered by each candidate
-    ~∨/in←votes>0:⍬                     ⍝ no one has votes: no winner
-    cands/⍨←in ⋄ votes/⍨←in
-    tally←⊂cands,[1.5]votes             ⍝ current round's vote tally
-    ≢win←cands/⍨(2∘×>+/)votes:tally,win ⍝ if someone won, output tally,winner
-    los←cands/⍨votes=⌊/votes            ⍝ all with lowest #votes lose the round
-    next←{0@los⊢⍵-+/⍵∘.>{⍵/⍨×⍵}⍵[los]}¨⍵[;2]
-⍝                       {⍵/⍨×⍵}⍵[los]     for losers voted for,
+    total←+⌿↑⍵[;1]×1=⍵[;2]              ⍝ votes garnered by each candidate
+    ~∨/in←×total:⍬                      ⍝ no one has votes: no winner
+    cands←in/⍳≢total ⋄ total/⍨←in
+    tally←⊂cands,[1.5]total             ⍝ current round's vote tally
+    ≢win←cands/⍨(+/<2×⊢)total:tally,win ⍝ if someone won, output tally,winner
+    los←cands/⍨total=⌊/total            ⍝ all with lowest #votes lose the round
+    next←{0@los⊢⍵-+/⍵∘.>⍵[los]~0}¨⍵[;2]
+⍝                       ⍵[los]~0          for losers voted for,
 ⍝               ⍵-+/⍵∘.>                  shift up lower choices
 ⍝         0@los⊢                          remove losers from consideration
     tally,∇ next{⍺,⍨+/⍵}⌸⍵[;1]          ⍝ re-group voters and recurse, prepending tally

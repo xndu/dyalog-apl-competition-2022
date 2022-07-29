@@ -1,11 +1,11 @@
 DDN←{
     month ←'january' 'february' 'march' 'april' 'may' 'june'
     month,←'july' 'august' 'september' 'october' 'november' 'december'
-    months←3↑¨month
+    months←↑3↑¨month
     monthl←≢¨month
     monthd←31 28 31 30 31 30 31 31 30 31 30 31
     dow   ←'monday' 'tuesday' 'wednesday' 'thursday' 'friday' 'saturday' 'sunday'
-    dows  ←3↑¨dow
+    dows  ←↑3↑¨dow
     dowl  ←≢¨dow
     ord   ←'st' 'nd' 'rd' 'th'
     ords  ←⊃¨ord
@@ -16,22 +16,22 @@ DDN←{
         ~'_YMDWOPmdhswyotp'∊⍨⊃⍺:⍺ ∇⍥(1∘↓) ⍵
         token rest←4(↑{⍺⍵}↓)⍺
         'YYYY'                     ≡  token:(1 2⍴'Y' (⍎4↑⍵))⍪rest∇⍵↓⍨4
-        'MMMM' 'Mmmm' 'mmmm' '_mmm'∊⍨⊂token:(1 2⍴'M' num)   ⍪rest∇⍵↓⍨monthl[num←months⍳⊂⎕C 3↑⍵]
+        'MMMM' 'Mmmm' 'mmmm' '_mmm'∊⍨⊂token:(1 2⍴'M' num)   ⍪rest∇⍵↓⍨monthl[num←months⍳⎕C 3↑⍵]
         'WWWW'                     ≡  token:(1 2⍴'Yw'(⍎4↑⍵))⍪rest∇⍵↓⍨4
-        'DDDD' 'Dddd' 'dddd' '_ddd'∊⍨⊂token:(1 2⍴'Dw'num)   ⍪rest∇⍵↓⍨dowl[num←dows⍳⊂⎕C 3↑⍵]
+        'DDDD' 'Dddd' 'dddd' '_ddd'∊⍨⊂token:(1 2⍴'Dw'num)   ⍪rest∇⍵↓⍨dowl[num←dows⍳⎕C 3↑⍵]
         token rest←3(↑{⍺⍵}↓)⍺
-        'MMM' 'Mmm' 'mmm' '_mm'∊⍨⊂token:(1 2⍴'M' (months⍳⊂⎕C 3↑⍵))⍪rest∇⍵↓⍨3
-        'DDD' 'Ddd' 'ddd' '_dd'∊⍨⊂token:(1 2⍴'Dw'(dows⍳⊂⎕C 3↑⍵))  ⍪rest∇⍵↓⍨3
+        'MMM' 'Mmm' 'mmm' '_mm'∊⍨⊂token:(1 2⍴'M' (months⍳⎕C 3↑⍵))⍪rest∇⍵↓⍨3
+        'DDD' 'Ddd' 'ddd' '_dd'∊⍨⊂token:(1 2⍴'Dw'(dows⍳⎕C 3↑⍵))  ⍪rest∇⍵↓⍨3
         token rest←2(↑{⍺⍵}↓)⍺
         'YY'          ≡  token:(1 2⍴'Y0'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
         'MM' '_M'     ∊⍨⊂token:(1 2⍴'M' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
         'DD' '_D'     ∊⍨⊂token:(1 2⍴'D' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
-        'OO' 'Oo' 'oo'∊⍨⊂token:(1 2⍴'Do'(ord⍳⊂⎕C 2↑⍵)) ⍪rest∇⍵↓⍨2
+        'OO' 'Oo' 'oo'∊⍨⊂token:(1 2⍴'Do'(ord⍳⎕C 2↑⍵)) ⍪rest∇⍵↓⍨2
         'yy' '_y'     ≡  token:(1 2⍴'Dy'(⍎3↑⍵))       ⍪rest∇⍵↓⍨3
         'WW'          ≡  token:(1 2⍴'Yw'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
         'ww' '_w'     ∊⍨⊂token:(1 2⍴'Ww'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
         'tt' '_t'     ∊⍨⊂token:(1 2⍴'hm'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
-        'PP' 'pp'     ∊⍨⊂token:(1 2⍴'hq'(half⍳⊂⎕C 2↑⍵))⍪rest∇⍵↓⍨2
+        'PP' 'pp'     ∊⍨⊂token:(1 2⍴'hq'(half⍳⎕C 2↑⍵))⍪rest∇⍵↓⍨2
         'hh' '_h'     ∊⍨⊂token:(1 2⍴'h' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
         'mm' '_m'     ∊⍨⊂token:(1 2⍴'m' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
         'ss' '_s'     ∊⍨⊂token:(1 2⍴'s' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
@@ -125,6 +125,7 @@ DDN←{
         yrmf ←400⍴∧/(1-⍨⍳100)∘.=yearm
         yrqf ←100/∧/0 1 2 3∘.=4|yearq
         yrf  ←yrmf∧yrqf
+
 ⍝⍝            compose
         valid←⍸∊yrf∧daysf
         ⍬≡valid:'inconsistent date'⎕SIGNAL 7

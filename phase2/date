@@ -23,18 +23,18 @@ DDN←{
         'MMM' 'Mmm' 'mmm' '_mm'∊⍨⊂token:(1 2⍴'M' (months⍳⎕C 3↑⍵))⍪rest∇⍵↓⍨3
         'DDD' 'Ddd' 'ddd' '_dd'∊⍨⊂token:(1 2⍴'Dw'(dows⍳⎕C 3↑⍵))  ⍪rest∇⍵↓⍨3
         token rest←2(↑{⍺⍵}↓)⍺
-        'YY'          ≡  token:(1 2⍴'Y0'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
-        'MM' '_M'     ∊⍨⊂token:(1 2⍴'M' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
-        'DD' '_D'     ∊⍨⊂token:(1 2⍴'D' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
-        'OO' 'Oo' 'oo'∊⍨⊂token:(1 2⍴'Do'(ord⍳⎕C 2↑⍵)) ⍪rest∇⍵↓⍨2
-        'yy' '_y'     ≡  token:(1 2⍴'Dy'(⍎3↑⍵))       ⍪rest∇⍵↓⍨3
-        'WW'          ≡  token:(1 2⍴'Yw'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
-        'ww' '_w'     ∊⍨⊂token:(1 2⍴'Ww'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
-        'tt' '_t'     ∊⍨⊂token:(1 2⍴'hm'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
-        'PP' 'pp'     ∊⍨⊂token:(1 2⍴'hq'(half⍳⎕C 2↑⍵))⍪rest∇⍵↓⍨2
-        'hh' '_h'     ∊⍨⊂token:(1 2⍴'h' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
-        'mm' '_m'     ∊⍨⊂token:(1 2⍴'m' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
-        'ss' '_s'     ∊⍨⊂token:(1 2⍴'s' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'YY'          ≡  token:(1 2⍴'Y0' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'MM' '_M'     ∊⍨⊂token:(1 2⍴'M'  (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'DD' '_D'     ∊⍨⊂token:(1 2⍴'D'  (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'OO' 'Oo' 'oo'∊⍨⊂token:(1 2⍴'Do' (ord⍳⎕C 2↑⍵)) ⍪rest∇⍵↓⍨2
+        'yy' '_y'     ≡  token:(1 2⍴'Dy' (⍎3↑⍵))       ⍪rest∇⍵↓⍨3
+        'WW'          ≡  token:(1 2⍴'Yw0'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'ww' '_w'     ∊⍨⊂token:(1 2⍴'Ww' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'tt' '_t'     ∊⍨⊂token:(1 2⍴'hm' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'PP' 'pp'     ∊⍨⊂token:(1 2⍴'hq' (half⍳⎕C 2↑⍵))⍪rest∇⍵↓⍨2
+        'hh' '_h'     ∊⍨⊂token:(1 2⍴'h'  (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'mm' '_m'     ∊⍨⊂token:(1 2⍴'m'  (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'ss' '_s'     ∊⍨⊂token:(1 2⍴'s'  (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
         token rest←1(↑{⍺⍵}↓)⍺ ⋄ token←⊃token
         'M' ≡  token:(1 2⍴'M' (⍎len↑⍵))    ⍪rest∇⍵↓⍨len←1          +(⍕¨ 9↓⍳ 12)∊⍨⊂2↑⍵
         'D' ≡  token:(1 2⍴'D' (⍎len↑⍵))    ⍪rest∇⍵↓⍨len←1          +(⍕¨ 9↓⍳ 31)∊⍨⊂2↑⍵
@@ -57,7 +57,8 @@ DDN←{
 ⍝     Do  " st nd rd th                                       OO Oo oo O o
 ⍝     Dy  day of year                                         yy _y    y
 ⍝     --
-⍝     Yw  week-year       WWWW                                WW
+⍝     Yw0 100|week-year                                       WW
+⍝     Yw  week-year       WWWW
 ⍝     Ww  week of year                                        ww _w    w
 ⍝     Dw  day of week     DDDD Dddd dddd _ddd DDD Ddd ddd _dd          d
 ⍝     --
@@ -92,9 +93,10 @@ DDN←{
         day  ←pick'D'
         dayo ←pick'Do'
         dayy ←pick'Dy'
-        yearw←pick'Yw'
+        yrwm ←(pick'Yw0')∪(100|pick'Yw')
+        yrwq ←⌊100÷⍨pick'Yw'
         weekw←pick'Ww'
-        dayw ←7|pick'Dw'
+        dayw ←pick'Dw'
 ⍝⍝            subyear restrictions
 ⍝             leap regular
         ym   ←(⍳366) (⍳365)
@@ -105,33 +107,36 @@ DDN←{
         dmf  ←(∧/∘.=∘day)¨dm
         dmf ∧←∊∘(∊dayo⌷1 2 3(0 4 5 6 7 8 9))¨10|dm
         ymdf ←ymf∧mmf∧dmf
-⍝             leap_reg reg_reg reg_leap
-⍝             1 2 3 4 5 6 7 start
-        yo   ←1-⍨2 1/(⍳365) (⍳366)
-        ww   ←1+(↑1 2/(1+@5 6⊢7⍴52) (1+@5⊢7⍴52))|1-⍨(⌈7÷⍨yo∘.+⍳7)-⍤1⊢4 3/0 1
-        dw   ←7|yo∘.+⍳7
-        wwf  ←(∧/∘.=∘weekw)¨ww
-        dwf  ←(∧/∘.=∘dayw)¨dw
-        ywdf ←wwf∧dwf
 ⍝⍝            year restrictions
-⍝             400 gregorian year cycles
-        leap ←1@1⊢400⍴0,0=4|⍳99
+⍝             gregorian calendar has a 400 year cycle
+⍝             when 300=400|year, 1/1 is a monday
+⍝             this is convenient for week-years.
+        leap ←1@101⊢400⍴0,0=4|⍳99
         leapf←ymdf[2-leap]
-        dif  ←leap-¯1⌽leap
-        ydow ←1+7|+\5,1+¯1↓leap
-        diff ←ywdf[ydow⊂⍤,⍤0⍨2+dif]
-        daysf←leapf∧diff
 ⍝             year info
         yrmf ←400⍴∧/(1-⍨⍳100)∘.=yearm
-        yrqf ←100/∧/0 1 2 3∘.=4|yearq
+        yrqf ←100/∧/3 0 1 2∘.=4|yearq
         yrf  ←yrmf∧yrqf
-
+⍝⍝            weekyear restrictions
+⍝             most weekyears have 52 weeks
+⍝             years starting on thu, and leap-years starting on wed have 53
+        ydow ←¯1⌽1+7|+\1+leap
+        ywlen←52+(4=ydow)∨(leap∧3=ydow)
+        yw   ←ywlen/1-⍨⍳≢ywlen
+        ywf  ←(∧/∘.=∘yrwm)¨100|yw
+        ywf ∧←∧⌿(4|yrwq)∘.=4|3+⌊100÷⍨yw
+        ww   ←∊⍳¨ywlen
+        wwf  ←(∧/∘.=∘weekw)¨ww
+        dw   ←∊(+/ywlen)/⊂⍳7
+        dwf  ←(∧/∘.=∘dayw)¨dw
+        ywdf ←dwf∧wwf∧⍥(7∘/)ywf
 ⍝⍝            compose
-        valid←⍸∊yrf∧daysf
+        valid←⍸ywdf∧∊yrf∧leapf
         ⍬≡valid:'inconsistent date'⎕SIGNAL 7
-	yrqq ←⊃5,⍨⌊yearq÷4
-        0 146097⊥yrqq (⊃valid)
+        yrqm ←⊃valid
+	yrqq ←∊4-⍨⌊4÷⍨3-⍨yearq∪yrwq
+        1<≢yrqq:'inconsistent century'⎕SIGNAL 7
+        0 146097⊥(⊃yrqq) yrqm
     }int[;2]
-    offset←693961
-    fracp+intp-offset
+    fracp+intp
 }

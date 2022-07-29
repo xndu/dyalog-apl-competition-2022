@@ -3,6 +3,7 @@ DDN←{
     month,←'july' 'august' 'september' 'october' 'november' 'december'
     months←3↑¨month
     monthl←≢¨month
+    monthd←31 28 31 30 31 30 31 31 30 31 30 31
     dow   ←'monday' 'tuesday' 'wednesday' 'thursday' 'friday' 'saturday' 'sunday'
     dows  ←3↑¨dow
     dowl  ←≢¨dow
@@ -92,9 +93,42 @@ DDN←{
         dayo ←pick'Do'
         dayy ←pick'Dy'
         yearw←pick'Yw'
-        weekw←pick'Ww'
-        dayw ←pick'Dw'
-        'unfinished'
+        weekw←1-⍨pick'Ww'
+        dayw ←7|pick'Dw'
+⍝⍝            subyear restrictions
+⍝             leap regular
+        ym   ←(⍳366) (⍳365)
+	mm   ←((1+@2⊢monthd)/⍳12) (monthd/⍳12)
+        dm   ←(∊⍳¨1+@2⊢monthd) (∊⍳¨monthd)
+        ymf  ←(∧/∘.=∘dayy)¨ym
+        mmf  ←(∧/∘.=∘month)¨mm
+        dmf  ←((10|dm)∊,dayo⌷1 2 3(0 4 5 6 7 8 9))∧(∧/∘.=∘day)¨dm
+        ymdf ←⊃∧/ymf mmf dmf
+⍝             leap_reg reg_reg reg_leap
+⍝             1 2 3 4 5 6 7 start
+        yo   ←1-⍨2 1/(⍳365) (⍳366)
+        ww   ←1+(1 2/(1+@5 6⊢7⍴52) (1+@5⊢7⍴52))|[1]1-⍨(⌈7÷⍨yo∘.+⍳7)-⍤1⊢4 3/0 1
+        dw   ←7|yo∘.+⍳7
+        wwf  ←(∧/=∘weekw)¨ww
+        dwf  ←(∧/=∘dayw)¨dw
+        ywdf ←wwf∧dwf
+⍝⍝            year restrictions
+⍝             400 gregorian year cycles
+        leap ←1@1⊢400⍴0,0=4|⍳99
+        leapf←ymdf[2-leap]
+        dif  ←leap-¯1⌽leap
+        diff ←ywdf[2+dif]
+        daysf←leapf∧diff
+⍝⍝            year info
+        yrmf ←400⍴∧/(1-⍨⍳100)∘.=yearm
+        yrqf ←100/∧/0 1 2 3∘.=4|yearq
+        yrf  ←yrmf∧yrqf
+⍝⍝            compose
+        valid←⍸∊yrf∧daysf
+        ⍬≡valid:'inconsistent date'⎕SIGNAL 7
+	yrqq ←⊃5,⍨⌊yearq÷4
+        offset←¯693960
+        0 (+/leap) 1⊥yrqq (⊃valid) offset
     }int[;2]
-    fracp
+    intp+fracp
 }

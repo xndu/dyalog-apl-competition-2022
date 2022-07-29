@@ -1,26 +1,69 @@
-⍝wip
- DDN←{
-     alphanum←⎕D,⎕A,⎕C ⎕A
-     split←∊∘alphanum⊆⊢
-     k←split ⍺
-     v←split (~⍤∊∘'th'/⊢)⎕C ⍵
-     select←{⍺←k⋄⍺⍺⍣(≢res)⊢res←∪(⍺∊⍵)/v}
-     year←⍎select⊂'YYYY'
-     year100←(100|year)∪⍎select⊂'YY'
-     month←⍎select(,'M') 'MM' '_M'
-     month∪←(⎕C k) ('jan' 'feb' 'mar' 'apr' 'may' 'jun' 'jul' 'aug' 'sep' 'oc' 'nov' 'dec'∘⍳)select 'mmm' '_mm'
-     month∪←(⎕C k) ('january' 'february' 'marc' 'april' 'may' 'june' 'july' 'augus' 'sepember' 'ocober' 'november' 'december'∘⍳)select 'mmmm' '_mmm'
-     day←⍎select(,'D') 'DD' '_D'
-     hour←⍎select(,'h') 'hh' '_h'
-     minute←⍎select(,'m') 'mm' '_m'
-     second←⍎select(,'s') 'ss' '_s'
-     dow←⍎select⊂(,'d')
-     dow∪←(⎕C k) ('mon' 'ue' 'wed' 'u' 'fri' 'sa' 'sun'∘⍳)select 'ddd' '_dd'
-
-     dow∪←(⎕C k) ('monday' 'tuesday' 'wednesday' 'thursday' 'friday' 'saturday' 'sunday'∘⍳)select 'dddd' '_ddd'
-     weekn←⍎select(,'w') 'ww' '_w'
-     weekyr←⍎select⊂'WWWW'
-     weekyr100←⍎select⊂'WW'
-     doy←⍎select(,'y') 'yy' '_y'
-
- }
+DDN←{
+    month ←'january' 'february' 'march' 'april' 'may' 'june'
+    month,←'july' 'august' 'september' 'october' 'november' 'december'
+    months←3↑¨month
+    monthl←≢¨month
+    dow   ←'monday' 'tuesday' 'wednesday' 'thursday' 'friday' 'saturday' 'sunday'
+    dows  ←3↑¨dow
+    dowl  ←≢¨dow
+    ord   ←'th' 'st' 'nd' 'rd'
+    ords  ←⊃¨ord
+    half  ←'am' 'pm'
+    halfs ←⊃¨half
+    parse ←⍺ {
+        ''≡⍺:0 2⍴⍬
+        ~'_YMDWOPmdhswyotp'∊⍨⊃⍺:⍺ ∇⍥(1∘↓) ⍵
+        token rest←4(↑{⍺⍵}↓)⍺
+        'YYYY'                     ≡  token:(1 2⍴'Y' (⍎4↑⍵))⍪rest∇⍵↓⍨4
+        'MMMM' 'Mmmm' 'mmmm' '_mmm'∊⍨⊂token:(1 2⍴'M' num)   ⍪rest∇⍵↓⍨monthl[num←months⍳⎕C 3↑⍵]
+        'DDDD' 'Dddd' 'dddd' '_ddd'∊⍨⊂token:(1 2⍴'Dw'num)   ⍪rest∇⍵↓⍨dowl[num←dow⍳⎕C 3↑⍵]
+        'WWWW'                     ≡  token:(1 2⍴'Yw'(⍎4↑⍵))⍪rest∇⍵↓⍨4
+        token rest←3(↑{⍺⍵}↓)⍺
+        'MMM' 'Mmm' 'mmm' '_mm'∊⍨⊂token:(1 2⍴'M' (months⍳3↑⍵))⍪rest∇⍵↓⍨3
+        'DDD' 'Ddd' 'ddd' '_dd'∊⍨⊂token:(1 2⍴'Dw'(dow⍳3↑⍵))   ⍪rest∇⍵↓⍨3
+        token rest←2(↑{⍺⍵}↓)⍺
+        'YY'          ≡  token:(1 2⍴'Y0'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'MM' '_M'     ∊⍨⊂token:(1 2⍴'M' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'DD' '_D'     ∊⍨⊂token:(1 2⍴'D' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'hh' '_h'     ∊⍨⊂token:(1 2⍴'h' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'mm' '_m'     ∊⍨⊂token:(1 2⍴'m' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'ss' '_s'     ∊⍨⊂token:(1 2⍴'s' (⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'ww' '_w'     ∊⍨⊂token:(1 2⍴'Ww'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'WW'          ≡  token:(1 2⍴'Yw'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'yy' '_y'     ≡  token:(1 2⍴'Dy'(⍎3↑⍵))       ⍪rest∇⍵↓⍨3
+        'OO' 'Oo' 'oo'∊⍨⊂token:(1 2⍴'Do'(ord⍳⎕C 2↑⍵)) ⍪rest∇⍵↓⍨2
+        'tt' '_t'     ∊⍨⊂token:(1 2⍴'hm'(⍎2↑⍵))       ⍪rest∇⍵↓⍨2
+        'PP' 'pp'     ∊⍨⊂token:(1 2⍴'hq'(half⍳⎕C 2↑⍵))⍪rest∇⍵↓⍨2
+        token rest←1(↑{⍺⍵}↓)⍺ ⋄ token←⊃token
+        'M'≡token:(1 2⍴'M' (⍎len↑⍵))    ⍪rest∇⍵↓⍨len←1          +(⍕¨ 9↓⍳ 12)∊⍨⊂2↑⍵
+        'D'≡token:(1 2⍴'D' (⍎len↑⍵))    ⍪rest∇⍵↓⍨len←1          +(⍕¨ 9↓⍳ 31)∊⍨⊂2↑⍵
+        'h'≡token:(1 2⍴'h' (⍎len↑⍵))    ⍪rest∇⍵↓⍨len←1          +(⍕¨ 9↓⍳ 23)∊⍨⊂2↑⍵
+        'm'≡token:(1 2⍴'m' (⍎len↑⍵))    ⍪rest∇⍵↓⍨len←1          +(⍕¨ 9↓⍳ 59)∊⍨⊂2↑⍵
+        's'≡token:(1 2⍴'s' (⍎len↑⍵))    ⍪rest∇⍵↓⍨len←1          +(⍕¨ 9↓⍳ 59)∊⍨⊂2↑⍵
+        'd'≡token:(1 2⍴'Dw'(⍎  1↑⍵))    ⍪rest∇⍵↓⍨1
+        'w'≡token:(1 2⍴'Ww'(⍎len↑⍵))    ⍪rest∇⍵↓⍨len←1          +(⍕¨ 9↓⍳ 53)∊⍨⊂2↑⍵
+        'y'≡token:(1 2⍴'Dy'(⍎len↑⍵))    ⍪rest∇⍵↓⍨len←1+(⍵[2]∊⎕D)+(⍕¨99↓⍳365)∊⍨⊂3↑⍵
+        'O'≡token:(1 2⍴'Do'(ords⍳⎕C⊃⍵)) ⍪rest∇⍵↓⍨1
+        't'≡token:(1 2⍴'hm'(12|⍎len↑⍵)) ⍪rest∇⍵↓⍨len←1          +(⍕¨ 9↓⍳ 12)∊⍨⊂2↑⍵
+        'P'≡token:(1 2⍴'hq'(halfs⍳⎕C⊃⍵))⍪rest∇⍵↓⍨1
+        ⍺ ∇⍥(1∘↓) ⍵
+    } ⍵
+    group ←parse[;1]{⍺,(⊃⍵),(≢⍵)}⌸parse[;2]
+    1<⌈/group[;3]:'inconsistent input'⎕SIGNAL 7
+    fmask ←'hmstP'∊⍨⊃¨group[;1]
+    frac  ←group⌿⍨ fmask
+    fracp ←frac[;1]{
+        second←⊃⍵/⍨'s'∘≡¨⍺
+        minute←⊃⍵/⍨'m'∘≡¨⍺
+        hourq ←(1-⍨⍵/⍨'hq'∘≡¨⍺)∪(⌊12÷⍨⍵/⍨'h'∘≡¨⍺)
+        1<≢hourq:'inconsistent hour'⎕SIGNAL 7
+        hourq ←⊃hourq
+        hourm ←(⍵/⍨'hm'∘≡¨⍺)   ∪(12|⍵/⍨'h'∘≡¨⍺)
+        1<≢hourm:'inconsistent hour'⎕SIGNAL 7
+        hourm ←⊃hourm
+        2 12 60 60⊥hourq hourm minute second
+    }frac[;2]
+    fracp÷←86400
+    int   ←group⌿⍨~fmask
+    fracp
+}
